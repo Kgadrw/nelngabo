@@ -14,15 +14,18 @@ const Hero = () => {
         <div className="space-y-6 max-w-2xl animate-fade-in">
           <div className="relative">
             <h1
-              className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter relative z-10"
+              className="text-5xl md:text-7xl lg:text-8xl font-normal tracking-tighter relative z-10"
               style={{ fontFamily: '"Kablammo", "Oi", cursive' }}
             >
               NEL NGABO
             </h1>
             {/* Glitch effect text shadow */}
             <h1
-              className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter absolute top-0 left-0 opacity-50 text-gray-medium"
-              style={{ transform: "translate(2px, 2px)", fontFamily: '"Kablammo", "Oi", cursive' }}
+              className="text-5xl md:text-7xl lg:text-8xl font-normal tracking-tighter absolute top-0 left-0 opacity-50 text-gray-medium"
+              style={{
+                transform: "translate(2px, 2px)",
+                fontFamily: '"Kablammo", "Oi", cursive',
+              }}
               aria-hidden="true"
             >
               NEL NGABO
@@ -51,12 +54,17 @@ const Hero = () => {
             </Link>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button size="lg" className="text-lg px-8 group relative overflow-hidden">
+            <Button
+              size="lg"
+              className="text-lg px-8 group relative overflow-hidden"
+            >
               <span className="relative z-10">LATEST ALBUM</span>
               <div className="absolute inset-0 bg-foreground/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 group">
-              <span className="group-hover:tracking-wider transition-all duration-300">WATCH NOW</span>
+              <span className="group-hover:tracking-wider transition-all duration-300">
+                WATCH NOW
+              </span>
             </Button>
           </div>
         </div>

@@ -43,10 +43,10 @@ All colors MUST be HSL.
     --gray-light: 0 0% 10%;
     --gray-medium: 0 0% 60%;
     --gray-dark: 0 0% 80%;
-    
+
     /* Typography scale */
-    --font-display: 'Arial Black', 'Arial Bold', sans-serif;
-    
+    --font-display: "Kablammo", "Mountains of Christmas", "Oi", cursive;
+
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-in-out;
@@ -80,7 +80,7 @@ All colors MUST be HSL.
     --border: 0 0% 80%;
     --input: 0 0% 90%;
     --ring: 0 0% 0%;
-    
+
     --gray-light: 0 0% 95%;
     --gray-medium: 0 0% 40%;
     --gray-dark: 0 0% 20%;
@@ -94,5 +94,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: "Mountains of Christmas", "Oi", cursive;
   }
 }
