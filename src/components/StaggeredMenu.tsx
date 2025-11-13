@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './StaggeredMenu.css';
 
 interface MenuItem {
@@ -49,6 +49,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   onMenuOpen,
   onMenuClose
 }) => {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
   const panelRef = useRef<HTMLElement>(null);
@@ -389,67 +390,88 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         </button>
       </header>
 
-      <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
-        <div className="sm-panel-inner">
-          <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
-            {items && items.length ? (
-              items.map((it, idx) => {
-                const isExternalLink = it.link.startsWith('http://') || it.link.startsWith('https://');
-                const isHashLink = it.link.includes('#');
-                const isInternalRoute = it.link.startsWith('/') && !isExternalLink && !isHashLink;
-                
-                if (isInternalRoute) {
+        <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
+          <div className="sm-panel-inner">
+            <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
+              {items && items.length ? (
+                items.map((it, idx) => {
+                  const isExternalLink =
+                    it.link.startsWith('http://') || it.link.startsWith('https://');
+                  const isHashLink = it.link.includes('#');
+                  const shouldUseRouterLink = !isExternalLink;
+
+                  const linkTarget = (() => {
+                    if (!isHashLink) {
+                      return it.link;
+                    }
+
+                    const [pathPart, hashPart] = it.link.split('#');
+                    const pathname =
+                      pathPart === '' ? location.pathname : pathPart || location.pathname;
+                    const hash = hashPart ? `#${hashPart}` : undefined;
+                    return { pathname, hash };
+                  })();
+
+                  const handleClick = () => {
+                    if (open) {
+                      toggleMenu();
+                    }
+                  };
+
+                  if (shouldUseRouterLink) {
+                    return (
+                      <li className="sm-panel-itemWrap" key={it.label + idx}>
+                        <Link
+                          className="sm-panel-item"
+                          to={linkTarget}
+                          aria-label={it.ariaLabel}
+                          data-index={idx + 1}
+                          onClick={handleClick}
+                        >
+                          <span className="sm-panel-itemLabel">{it.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  }
+
                   return (
                     <li className="sm-panel-itemWrap" key={it.label + idx}>
-                      <Link 
-                        className="sm-panel-item" 
-                        to={it.link} 
-                        aria-label={it.ariaLabel} 
+                      <a
+                        className="sm-panel-item"
+                        href={it.link}
+                        aria-label={it.ariaLabel}
                         data-index={idx + 1}
-                        onClick={() => {
-                          if (open) {
-                            toggleMenu();
-                          }
-                        }}
+                        onClick={handleClick}
                       >
-                        <span className="sm-panel-itemLabel">{it.label}</span>
-                      </Link>
-                    </li>
-                  );
-                } else {
-                  return (
-                    <li className="sm-panel-itemWrap" key={it.label + idx}>
-                      <a className="sm-panel-item" href={it.link} aria-label={it.ariaLabel} data-index={idx + 1}>
                         <span className="sm-panel-itemLabel">{it.label}</span>
                       </a>
                     </li>
                   );
-                }
-              })
-            ) : (
-              <li className="sm-panel-itemWrap" aria-hidden="true">
-                <span className="sm-panel-item">
-                  <span className="sm-panel-itemLabel">No items</span>
-                </span>
-              </li>
+                })
+              ) : (
+                <li className="sm-panel-itemWrap" aria-hidden="true">
+                  <span className="sm-panel-item">
+                    <span className="sm-panel-itemLabel">No items</span>
+                  </span>
+                </li>
+              )}
+            </ul>
+            {displaySocials && socialItems && socialItems.length > 0 && (
+              <div className="sm-socials" aria-label="Social links">
+                <h3 className="sm-socials-title">Socials</h3>
+                <ul className="sm-socials-list" role="list">
+                  {socialItems.map((s, i) => (
+                    <li key={s.label + i} className="sm-socials-item">
+                      <a href={s.link} target="_blank" rel="noopener noreferrer" className="sm-socials-link">
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
-          </ul>
-          {displaySocials && socialItems && socialItems.length > 0 && (
-            <div className="sm-socials" aria-label="Social links">
-              <h3 className="sm-socials-title">Socials</h3>
-              <ul className="sm-socials-list" role="list">
-                {socialItems.map((s, i) => (
-                  <li key={s.label + i} className="sm-socials-item">
-                    <a href={s.link} target="_blank" rel="noopener noreferrer" className="sm-socials-link">
-                      {s.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </aside>
+          </div>
+        </aside>
     </div>
   );
 };
