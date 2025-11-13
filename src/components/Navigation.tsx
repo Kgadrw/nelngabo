@@ -9,10 +9,10 @@ const menuItems = [
 ];
 
 const socialItems = [
-  { label: 'Instagram', link: 'https://instagram.com' },
-  { label: 'Twitter', link: 'https://twitter.com' },
-  { label: 'YouTube', link: 'https://youtube.com' },
-  { label: 'Spotify', link: 'https://spotify.com' }
+  { label: 'Instagram', link: 'https://www.instagram.com/nelngabo/' },
+  { label: 'Twitter', link: 'https://twitter.com/nelngabo' },
+  { label: 'YouTube', link: 'https://www.youtube.com/@nelngabo9740' },
+  { label: 'Spotify', link: 'https://open.spotify.com/artist/nelngabo' }
 ];
 
 const Navigation = () => {

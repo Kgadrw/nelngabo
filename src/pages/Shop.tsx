@@ -6,7 +6,7 @@ const Shop = () => {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-background pt-16">
+      <div className="min-h-screen bg-black pt-16">
         <ShopSection />
         <Footer />
       </div>
