@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 .staggered-menu-wrapper {
   position: relative;
   width: 100%;
@@ -190,6 +192,7 @@
   font-size: 1rem;
   font-weight: 500;
   color: var(--sm-accent, #ff0000);
+  font-family: "Orbitron", sans-serif;
 }
 
 .sm-socials-list {
@@ -239,6 +242,7 @@
   transition:
     color 0.3s ease,
     opacity 0.3s ease;
+  font-family: "Orbitron", sans-serif;
 }
 
 .sm-socials-link:hover {
@@ -277,6 +281,7 @@
   display: inline-block;
   text-decoration: none;
   padding-right: 1.4em;
+  font-family: "Orbitron", sans-serif;
 }
 
 .staggered-menu-panel .sm-socials-list .sm-socials-link {
@@ -301,6 +306,7 @@
   display: inline-block;
   will-change: transform;
   transform-origin: 50% 100%;
+  font-family: "Orbitron", sans-serif;
 }
 
 .sm-panel-item:hover {
