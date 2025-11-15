@@ -31,7 +31,7 @@ const products = [
 
 const ShopSection = () => {
   return (
-    <section id="shop" className="py-24 bg-muted relative overflow-hidden">
+    <section id="shop" className="py-24 bg-muted relative overflow-hidden p-4">
       {/* Dot pattern background */}
       <div className="absolute inset-0 opacity-5">
         {[...Array(100)].map((_, i) => (
@@ -46,7 +46,7 @@ const ShopSection = () => {
         ))}
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
         <h2 className="text-5xl md:text-7xl font-bold mb-16 tracking-tighter">SHOP</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

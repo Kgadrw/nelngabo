@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nel Ngabo Admin</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nel Ngabo Admin</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Orbitron", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        --bg: #050505;
+        --panel: #0d0d0d;
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #f9f9f9;
+        --muted: #b2b2b2;
+        --accent: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .layout {
+        display: flex;
+        width: 100%;
+      }
+
+      sidebar-shell {
+        width: 260px;
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+      }
+
+      sidebar-header {
+        padding: 2rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      sidebar-header h1 {
+        margin: 0;
+        letter-spacing: 0.15em;
+        font-size: 1.4rem;
+      }
+
+      sidebar-nav {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      sidebar-nav button {
+        background: transparent;
+        border: 1px solid transparent;
+        color: inherit;
+        font-family: inherit;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.65rem 0.8rem;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+
+      sidebar-nav button.active,
+      sidebar-nav button:hover {
+        border-color: var(--border);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      sidebar-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      main-shell {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 2.5rem;
+        gap: 2rem;
+      }
+
+      section-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2rem;
+        display: block;
+      }
+
+      section-panel header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      section-panel h2 {
+        margin: 0;
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      section-panel form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      field-group input,
+      field-group textarea {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.85rem;
+        color: inherit;
+        font-family: inherit;
+      }
+
+      field-group textarea {
+        min-height: 110px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+      }
+
+      .actions button {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        padding: 0.75rem 1.4rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+
+      .actions button.primary {
+        background: white;
+        color: black;
+        border-color: white;
+      }
+
+      gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      gallery-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1rem;
+        display: block;
+      }
+
+      gallery-card img,
+      gallery-card iframe {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 0.75rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--border);
+        padding: 0.7rem 0.3rem;
+        text-align: left;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          flex-direction: column;
+        }
+
+        sidebar-shell {
+          width: 100%;
+        }
+
+        main-shell {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <sidebar-shell>
+        <sidebar-header>
+          <h1>NEL NGABO</h1>
+          <span style="font-size:0.8rem;letter-spacing:0.3em;color:var(--muted)">ADMIN</span>
+        </sidebar-header>
+        <sidebar-nav>
+          <button class="active" data-panel="hero-panel">Hero</button>
+          <button data-panel="albums-panel">Albums</button>
+          <button data-panel="videos-panel">Videos</button>
+          <button data-panel="tours-panel">Tours</button>
+        </sidebar-nav>
+        <sidebar-footer>
+          STATUS<br />
+          <span id="db-status">Checking…</span>
+        </sidebar-footer>
+      </sidebar-shell>
+      <main-shell>
+        <section-panel id="hero-panel">
+          <header>
+            <div>
+              <h2>Hero Background</h2>
+              <p class="meta" id="hero-meta">Updated –</p>
+            </div>
+            <div class="actions">
+              <button id="hero-upload">Upload</button>
+              <button class="primary" id="hero-save">Save</button>
+            </div>
+          </header>
+          <div class="hero-preview">
+            <img id="hero-image" src="" alt="Hero" />
+            <div class="status" id="hero-status"></div>
+          </div>
+        </section-panel>
+
+        <section-panel id="albums-panel">
+          <header>
+            <div>
+              <h2>Albums</h2>
+              <p class="meta">Artwork + track list</p>
+            </div>
+            <button class="primary" id="album-save">Publish</button>
+          </header>
+          <form id="album-form">
+            <input type="hidden" name="coverUrl" id="album-cover-url" />
+            <field-group>
+              <span>Album Title</span>
+              <input type="text" name="title" placeholder="Vibranium Deluxe" required />
+            </field-group>
+            <field-group>
+              <span>Year</span>
+              <input type="text" name="year" placeholder="2025" />
+            </field-group>
+            <field-group>
+              <span>Track List</span>
+              <textarea name="tracks" placeholder="One track per line"></textarea>
+            </field-group>
+            <div class="actions">
+              <button type="button" id="album-cover-upload">Cover</button>
+            </div>
+          </form>
+          <gallery-grid id="album-list"></gallery-grid>
+        </section-panel>
+
+        <section-panel id="videos-panel">
+          <header>
+            <div>
+              <h2>Videos</h2>
+              <p class="meta">YouTube embeds</p>
+            </div>
+            <button class="primary" id="video-save">Publish</button>
+          </header>
+          <form id="video-form">
+            <field-group>
+              <span>Title</span>
+              <input type="text" name="title" placeholder="Visualizer title" required />
+            </field-group>
+            <field-group>
+              <span>YouTube URL</span>
+              <input type="url" name="youtubeUrl" placeholder="https://youtube.com/watch?v=..." required />
+            </field-group>
+          </form>
+          <gallery-grid id="video-list"></gallery-grid>
+        </section-panel>
+
+        <section-panel id="tours-panel">
+          <header>
+            <div>
+              <h2>Tours</h2>
+              <p class="meta">Dates & tickets</p>
+            </div>
+            <button class="primary" id="tour-save">Publish</button>
+          </header>
+          <form id="tour-form">
+            <field-group>
+              <span>Date</span>
+              <input type="date" name="date" required />
+            </field-group>
+            <field-group>
+              <span>City</span>
+              <input type="text" name="city" placeholder="Kigali" required />
+            </field-group>
+            <field-group>
+              <span>Venue</span>
+              <input type="text" name="venue" placeholder="BK Arena" required />
+            </field-group>
+            <field-group>
+              <span>Ticket link</span>
+              <input type="url" name="ticketUrl" placeholder="https://tickets..." required />
+            </field-group>
+          </form>
+          <table id="tour-table"></table>
+        </section-panel>
+      </main-shell>
+    </div>
+
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" async></script>
+    <script>
+      const state = { hero: null, albums: [], videos: [], tours: [] };
+      const api = {
+        get: (url) => fetch(url).then((res) => res.json()),
+        post:
+

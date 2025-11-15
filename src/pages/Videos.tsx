@@ -1,15 +1,16 @@
-import Hero from "@/components/Hero";
+import VideosSection from "@/components/VideosSection";
 import Sidebar from "@/components/Sidebar";
 
-const Index = () => {
+const Videos = () => {
   return (
     <>
       <Sidebar />
       <div className="min-h-screen bg-background pt-16 md:pl-72 md:pt-0">
-        <Hero />
+        <VideosSection />
       </div>
     </>
   );
 };
 
-export default Index;
+export default Videos;
+

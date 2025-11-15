@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { LayoutGrid, List } from "lucide-react";
+
 const videos = [
   {
     id: 1,
@@ -26,33 +29,70 @@ const videos = [
 ];
 
 const VideosSection = () => {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+
   return (
-    <section id="videos" className="py-24 bg-black relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <h2 className="text-5xl md:text-7xl font-bold mb-16 tracking-tighter">VIDEOS</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <section id="videos" className="py-24 bg-black relative p-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+        <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter">VIDEOS</h2>
+          <div className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/60">
+            <span>View</span>
+            <div className="flex rounded-full border border-white/10 bg-white/5">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`flex items-center gap-1 px-4 py-2 transition ${viewMode === "grid" ? "bg-white text-black" : "text-white/70"}`}
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Grid
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`flex items-center gap-1 px-4 py-2 transition ${viewMode === "list" ? "bg-white text-black" : "text-white/70"}`}
+              >
+                <List className="h-4 w-4" />
+                List
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "space-y-6"}>
           {videos.map((video, index) => (
             <div
               key={video.id}
-              className="group relative aspect-video bg-card border-2 border-border hover:border-foreground transition-all duration-500 overflow-hidden"
+              id={`video-card-${video.id}`}
+              data-search-item="video"
+              data-search-label={`Video · ${video.title}`}
+              data-search-category="Video"
+              data-search-description={`${video.views} views`}
+              data-search-keywords={[video.title, video.views].join("|")}
+              data-search-target="videos"
+              data-search-target-element={`video-card-${video.id}`}
+              className={`group relative bg-card border-2 border-border hover:border-foreground transition-all duration-500 overflow-hidden ${viewMode === "list" ? "md:flex md:items-stretch" : "aspect-video"}`}
               style={{ animationDelay: `${index * 150}ms` }}
             >
-              <iframe
-                src={`https://www.youtube.com/embed/${video.videoId}`}
-                title={video.title}
-                className="absolute inset-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-              
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none">
-                <h3 className="text-xl font-bold mb-1 transform group-hover:translate-x-2 transition-transform duration-300">{video.title}</h3>
-                <p className="text-gray-medium">{video.views} views</p>
+              <div className={viewMode === "list" ? "md:w-72 aspect-video relative" : "absolute inset-0"}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${video.videoId}`}
+                  title={video.title}
+                  className="absolute inset-0 h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
-              
+              {viewMode === "list" && (
+                <div className="flex-1 border-t border-white/5 bg-black/40 px-6 py-5 text-left">
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/50">{video.views} views</p>
+                  <h3 className="mt-2 text-2xl font-bold text-white">{video.title}</h3>
+                  <p className="mt-1 text-sm text-white/60">Exclusive performance footage and behind-the-scenes moments.</p>
+                </div>
+              )}
+
               {/* Corner accent */}
-              <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="pointer-events-none absolute top-0 right-0 h-16 w-16 border-t-2 border-r-2 border-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             </div>
           ))}
         </div>

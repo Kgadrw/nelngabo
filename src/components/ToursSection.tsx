@@ -36,7 +36,7 @@ const tours = [
 
 const ToursSection = () => {
   return (
-    <section id="tours" className="py-24 bg-background relative overflow-hidden">
+    <section id="tours" className="py-24 bg-background relative overflow-hidden p-4">
       {/* Diagonal lines background */}
       <div className="absolute inset-0 opacity-5">
         {[...Array(10)].map((_, i) => (
@@ -52,13 +52,21 @@ const ToursSection = () => {
         ))}
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
         <h2 className="text-5xl md:text-7xl font-bold mb-16 tracking-tighter">TOURS</h2>
         
         <div className="space-y-4">
           {tours.map((tour, index) => (
             <div
               key={tour.id}
+              id={`tour-card-${tour.id}`}
+              data-search-item="tour"
+              data-search-label={`Tour · ${tour.city}`}
+              data-search-category="Tour"
+              data-search-description={`${tour.date} · ${tour.venue}`}
+              data-search-keywords={[tour.city, tour.venue, tour.date].join("|")}
+              data-search-target="tours"
+              data-search-target-element={`tour-card-${tour.id}`}
               className="group flex flex-col md:flex-row md:items-center justify-between p-6 bg-card border-2 border-border hover:border-foreground transition-all duration-500 relative overflow-hidden"
               style={{ animationDelay: `${index * 100}ms` }}
             >

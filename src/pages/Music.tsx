@@ -1,15 +1,16 @@
-import Hero from "@/components/Hero";
+import MusicSection from "@/components/MusicSection";
 import Sidebar from "@/components/Sidebar";
 
-const Index = () => {
+const Music = () => {
   return (
     <>
       <Sidebar />
       <div className="min-h-screen bg-background pt-16 md:pl-72 md:pt-0">
-        <Hero />
+        <MusicSection />
       </div>
     </>
   );
 };
 
-export default Index;
+export default Music;
+

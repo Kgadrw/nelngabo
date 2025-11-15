@@ -1,12 +1,12 @@
-import Navigation from "@/components/Navigation";
 import ToursSection from "@/components/ToursSection";
 import Footer from "@/components/Footer";
+import Sidebar from "@/components/Sidebar";
 
 const Tours = () => {
   return (
     <>
-      <Navigation />
-      <div className="min-h-screen bg-background pt-16">
+      <Sidebar />
+      <div className="min-h-screen bg-background pt-24 md:pl-72 md:pt-0">
         <ToursSection />
         <Footer />
       </div>

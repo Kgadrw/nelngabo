@@ -1,7 +1,14 @@
 "use client";
 
-import { Play } from "lucide-react";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./ui/accordion";
+import { useState } from "react";
+import { Play, Music2, Music4, LayoutGrid, List } from "lucide-react";
+
+const listeningDestinations = [
+  { label: "Spotify", url: "https://open.spotify.com/artist/nelngabo", description: "Stream in high quality" },
+  { label: "Apple Music", url: "https://music.apple.com/", description: "Listen on all Apple devices" },
+  { label: "YouTube", url: "https://www.youtube.com/@nelngabo9740", description: "Watch the full visual album" },
+  { label: "SoundCloud", url: "https://soundcloud.com/", description: "Discover fan remixes" },
+];
 
 const albums = [
   {
@@ -10,6 +17,8 @@ const albums = [
     year: "2024",
     image: "/Album.jpeg",
     tracks: ["Intro", "Heartbeat", "Midnight Drive", "Echoes", "Finale"],
+    summary: "An explosive fusion of afro-futuristic rhythms with neon synth atmospheres.",
+    links: listeningDestinations,
   },
   {
     id: 2,
@@ -17,6 +26,8 @@ const albums = [
     year: "2023",
     image: "/Album.jpeg",
     tracks: ["Start", "Waves", "Hold On", "Skyline"],
+    summary: "A cinematic journey that celebrates coastal sunsets and pulsating nightlife.",
+    links: listeningDestinations,
   },
   {
     id: 3,
@@ -24,6 +35,8 @@ const albums = [
     year: "2022",
     image: "/Album.jpeg",
     tracks: ["Opening", "Road", "Nightfall"],
+    summary: "Raw storytelling from the early days—minimal beats, maximum emotion.",
+    links: listeningDestinations,
   },
 ];
 
@@ -37,70 +50,162 @@ const MusicSection = () => {
     }
   `;
 
+  const [selectedAlbum, setSelectedAlbum] = useState(albums[0]);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+
+  const handleSelectAlbum = (album: (typeof albums)[number]) => {
+    setSelectedAlbum(album);
+    document.getElementById(`album-card-${album.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <>
       <style>{orbitronStyle}</style>
       <section id="music" className="py-24 bg-background relative overflow-hidden p-4">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 border border-foreground rounded-full animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 border border-foreground" />
-        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
-          <h2 className="text-5xl md:text-7xl font-bold mb-16 tracking-tighter animate-fade-in">MUSIC</h2>
+          <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter animate-fade-in">ALBUMS</h2>
+            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/60">
+              <span>View</span>
+              <div className="flex rounded-full border border-white/10 bg-white/5">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("grid")}
+                  className={`flex items-center gap-1 px-4 py-2 transition ${
+                    viewMode === "grid" ? "bg-white text-black" : "text-white/70"
+                  }`}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                  Grid
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`flex items-center gap-1 px-4 py-2 transition ${
+                    viewMode === "list" ? "bg-white text-black" : "text-white/70"
+                  }`}
+                >
+                  <List className="h-4 w-4" />
+                  List
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-12 lg:grid-cols-[1.7fr,1fr]">
+            <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-8" : "space-y-6"}>
+              {albums.map((album, index) => {
+                const isSelected = selectedAlbum?.id === album.id;
+                return (
+                  <div
+                    key={album.id}
+                    id={`album-card-${album.id}`}
+                    data-search-item="music"
+                    data-search-label={`Album · ${album.title}`}
+                    data-search-category="Album"
+                    data-search-description={`${album.year} · ${album.tracks.length} tracks`}
+                    data-search-keywords={[album.title, album.year, ...album.tracks].join("|")}
+                    data-search-target="music"
+                    data-search-target-element={`album-card-${album.id}`}
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={isSelected}
+                    onClick={() => handleSelectAlbum(album)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleSelectAlbum(album);
+                      }
+                    }}
+                    className={`group relative overflow-hidden border transition-all duration-500 focus:outline-none ${
+                      isSelected
+                        ? "border-foreground bg-card/80 shadow-[0_0_30px_rgba(236,72,153,0.2)]"
+                        : "border-border bg-card hover:border-foreground"
+                    } ${viewMode === "list" ? "md:flex md:items-stretch" : ""}`}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    {/* IMAGE LAYER */}
+                    <div
+                      className={`overflow-hidden relative z-0 ${
+                        viewMode === "list" ? "md:w-48 aspect-square" : "aspect-square"
+                      }`}
+                    >
+                      <img
+                        src={album.image}
+                        alt={album.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground to-transparent opacity-0 group-hover:opacity-10 transform translate-x-full group-hover:translate-x-[-100%] transition-all duration-1000" />
+                    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {albums.map((album, index) => (
-              <div
-                key={album.id}
-                className="group relative overflow-hidden bg-card border border-border hover:border-foreground transition-all duration-500 animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* IMAGE LAYER */}
-                <div className="aspect-square overflow-hidden relative z-0">
-                  <img
-                    src={album.image}
-                    alt={album.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground to-transparent opacity-0 group-hover:opacity-10 transform translate-x-full group-hover:translate-x-[-100%] transition-all duration-1000" />
+                    {/* PLAY OVERLAY */}
+                    <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none group-hover:pointer-events-auto">
+                      <button className="w-16 h-16 rounded-full bg-foreground text-background flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                        <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                      </button>
+                    </div>
+
+                    {/* INFO */}
+                    <div
+                      className={`relative z-20 border-t border-border bg-background p-6 ${
+                        viewMode === "list" ? "flex-1" : ""
+                      }`}
+                    >
+                      <p className="text-xs tracking-[0.4em] text-gray-medium orbitron">{album.year}</p>
+                      <h3 className="text-2xl font-bold mt-2 mb-3 orbitron">{album.title}</h3>
+                      <p className="text-sm text-gray-400 leading-relaxed">{album.summary}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <aside className="rounded-3xl border border-border/60 bg-card/60 p-6 lg:p-8 backdrop-blur-xl self-start lg:sticky lg:top-24">
+              <div className="space-y-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Now Viewing</p>
+                  <h3 className="mt-3 text-3xl font-bold tracking-tight">{selectedAlbum.title}</h3>
+                  <p className="text-gray-400">{selectedAlbum.year}</p>
                 </div>
 
-                {/* PLAY OVERLAY — no click blocking when hidden */}
-                <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none group-hover:pointer-events-auto">
-                  <button className="w-20 h-20 rounded-full bg-foreground text-background flex items-center justify-center hover:scale-125 transition-transform duration-300">
-                    <Play className="w-10 h-10 ml-1" fill="currentColor" />
-                  </button>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Tracklist</p>
+                  <ul className="mt-4 space-y-3">
+                    {selectedAlbum.tracks.map((track, index) => (
+                      <li key={track} className="flex items-center justify-between rounded-xl border border-white/5 bg-black/20 px-3 py-2">
+                        <span className="flex items-center gap-3 text-sm text-white/90">
+                          <span className="text-xs text-gray-500 w-6">{String(index + 1).padStart(2, "0")}</span>
+                          {track}
+                        </span>
+                        <Music2 className="h-4 w-4 text-pink-400" />
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {/* INFO + ACCORDION */}
-                <div className="relative z-20 p-6 border-t border-border bg-background">
-                  <h3 className="text-xl font-bold mb-1 group-hover:translate-x-2 transition-transform duration-300 orbitron">
-                    {album.title}
-                  </h3>
-                  <p className="text-gray-medium mb-4 orbitron">{album.year}</p>
-
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value={`album-${album.id}`}>
-                      <AccordionTrigger className="w-full orbitron">
-                        Track List
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="list-disc list-inside space-y-2 text-sm text-gray-300">
-                          {album.tracks.map((track, tIdx) => (
-                            <li key={tIdx} className="flex items-center gap-2 orbitron">
-                              <span className="w-2 h-2 rounded-full bg-pink-500 inline-block" />
-                              <span>{track}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Where to listen</p>
+                  <div className="mt-4 space-y-3">
+                    {(selectedAlbum.links ?? listeningDestinations).map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 transition hover:border-white/40 hover:bg-white/10"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span className="text-white">{link.label}</span>
+                          <span className="text-white/40">•</span>
+                          <span className="text-white/60 text-xs">{link.description}</span>
+                        </span>
+                        <Music4 className="h-4 w-4 text-white/50 transition group-hover:text-white" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
+            </aside>
           </div>
         </div>
       </section>

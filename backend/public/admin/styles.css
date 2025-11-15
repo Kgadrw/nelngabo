@@ -1,0 +1,260 @@
+:root {
+  color-scheme: dark;
+  font-family: "Orbitron", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --bg: #040404;
+  --panel: #0b0b0b;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f6f6f6;
+  --muted: #a7a7a7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  font-family: inherit;
+}
+
+#root {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.08), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.04), transparent 40%);
+}
+
+.layout {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  width: 260px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__header {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar__header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.18em;
+}
+
+.sidebar__header span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.nav__button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+
+.nav__button--active,
+.nav__button:hover {
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar__footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2.5rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.panel__title {
+  margin: 0;
+  letter-spacing: 0.18em;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.panel__meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  padding: 0.75rem 1.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.button--primary {
+  background: white;
+  color: black;
+  border-color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.field input,
+.field textarea {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem;
+  color: inherit;
+  font-family: inherit;
+}
+
+.field textarea {
+  min-height: 110px;
+}
+
+.preview {
+  margin-top: 1.2rem;
+}
+
+.preview img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.status {
+  min-height: 1.2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tile {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.tile img,
+.tile iframe {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.7rem 0.35rem;
+  text-align: left;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 900px) {
+  #root {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}
+

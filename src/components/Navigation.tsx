@@ -2,10 +2,9 @@ import StaggeredMenu from "./StaggeredMenu";
 
 const menuItems = [
   { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
-  { label: 'Music', ariaLabel: 'View music section', link: '/#music' },
-  { label: 'Videos', ariaLabel: 'Watch videos', link: '/#videos' },
-  { label: 'Tours', ariaLabel: 'See tour dates', link: '/tours' },
-  { label: 'Shop', ariaLabel: 'Browse merchandise', link: '/shop' }
+  { label: 'Music', ariaLabel: 'View music page', link: '/music' },
+  { label: 'Videos', ariaLabel: 'Watch videos page', link: '/videos' },
+  { label: 'Tours', ariaLabel: 'See tour dates', link: '/tours' }
 ];
 
 const socialItems = [

@@ -15,6 +15,15 @@
   height: 100vh;
   z-index: 40;
   overflow: hidden;
+  pointer-events: none;
+}
+
+.staggered-menu-wrapper.fixed-wrapper[data-open] {
+  pointer-events: auto;
+}
+
+.staggered-menu-wrapper.fixed-wrapper .staggered-menu-header {
+  pointer-events: auto;
 }
 
 .staggered-menu-header {
