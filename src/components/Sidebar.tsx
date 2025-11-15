@@ -1,13 +1,31 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Home, Music4, Clapperboard, MapPin, Menu, X, Instagram, Twitter, Youtube } from "lucide-react";
+import { Home, Music4, Clapperboard, MapPin, Menu, X, Instagram, Twitter, Youtube, Sparkles, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const navLinks = [
+type SidebarNavLink = {
+  label: string;
+  icon: LucideIcon;
+  to: string;
+};
+
+type SidebarProps = {
+  variant?: "frontend" | "admin";
+};
+
+const frontendNavLinks: SidebarNavLink[] = [
   { label: "Home", to: "/", icon: Home },
   { label: "Albums", to: "/music", icon: Music4 },
   { label: "Videos", to: "/videos", icon: Clapperboard },
   { label: "Tours", to: "/tours", icon: MapPin },
+];
+
+const adminNavLinks: SidebarNavLink[] = [
+  { label: "Hero", icon: Sparkles, to: "/admin" },
+  { label: "Albums", icon: Music4, to: "/admin/albums" },
+  { label: "Videos", icon: Clapperboard, to: "/admin/videos" },
+  { label: "Tours", icon: MapPin, to: "/admin/tours" },
+  { label: "Account", icon: Home, to: "/admin/account" },
 ];
 
 const waveHeights = [8, 14, 24, 35, 24, 14, 8];
@@ -19,8 +37,10 @@ const waveAnimation = `
   }
 `;
 
-const Sidebar = () => {
+const Sidebar = ({ variant = "frontend" }: SidebarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navLinks = variant === "admin" ? adminNavLinks : frontendNavLinks;
+
   return (
     <>
       <style>{waveAnimation}</style>
@@ -34,6 +54,7 @@ const Sidebar = () => {
             <NavLink
               key={label}
               to={to}
+              end={variant === "admin" && to === "/admin"}
               className={({ isActive }) =>
                 [
                   "flex items-center gap-3 px-4 py-3 text-sm uppercase tracking-[0.3em] transition",
@@ -46,37 +67,32 @@ const Sidebar = () => {
             </NavLink>
           ))}
         </nav>
-        <div className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.4em] text-white/40">Latest release</p>
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="relative h-10 w-10">
-              <div className="absolute inset-0 rounded-full border border-white/15 bg-black/60" />
-              <div className="absolute inset-[3px] rounded-full border border-white/25" />
-              <div className="absolute inset-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-sky-500 opacity-80 animate-spin" style={{ animationDuration: "5s" }} />
-              <div className="absolute inset-4 rounded-full border border-white/40 bg-black" />
-              <div className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80" />
-            </div>
-            <div className="flex flex-1 items-center gap-2">
-              <div className="flex items-end gap-[2px]">
-                {waveHeights.map((height, index) => (
-                  <span
-                    key={index}
-                    className="w-[3px] rounded-full bg-gradient-to-t from-pink-500 via-purple-500 to-sky-500"
-                    style={{
-                      height: `${height * 0.6}px`,
-                      animation: "wavePulse 1.4s ease-in-out infinite",
-                      animationDelay: `${index * 60}ms`,
-                    }}
-                  />
-                ))}
+        {variant === "frontend" && (
+          <div className="space-y-4">
+            <p className="text-xs uppercase tracking-[0.4em] text-white/40">Latest release</p>
+            <div className="flex items-center gap-3 px-2 py-1">
+              <div className="flex flex-1 items-center gap-2">
+                <div className="flex items-end gap-[2px]">
+                  {waveHeights.map((height, index) => (
+                    <span
+                      key={index}
+                      className="w-[3px] rounded-full bg-gradient-to-t from-pink-500 via-purple-500 to-sky-500"
+                      style={{
+                        height: `${height * 0.6}px`,
+                        animation: "wavePulse 1.4s ease-in-out infinite",
+                        animationDelay: `${index * 60}ms`,
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
+              <div className="text-[0.6rem] font-semibold tracking-[0.4em] text-white">VIBRANIUM</div>
             </div>
-            <div className="text-[0.6rem] font-semibold tracking-[0.4em] text-white">VIBRANIUM</div>
+            <Button variant="secondary" asChild className="w-full uppercase tracking-[0.3em]">
+              <a href="/music">Listen</a>
+            </Button>
           </div>
-          <Button variant="secondary" asChild className="w-full uppercase tracking-[0.3em]">
-            <a href="/admin">Listen</a>
-          </Button>
-        </div>
+        )}
       </aside>
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 text-xs uppercase tracking-[0.4em] text-white/70 md:hidden">
         <span>NEL NGABO</span>
@@ -109,6 +125,7 @@ const Sidebar = () => {
               <NavLink
                 key={label}
                 to={to}
+                end={variant === "admin" && to === "/admin"}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={({ isActive }) =>
                   [

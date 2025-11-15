@@ -1,43 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Play, Music2, Music4, LayoutGrid, List } from "lucide-react";
+import { useContent } from "@/context/ContentContext";
 
-const listeningDestinations = [
+const fallbackListeningDestinations = [
   { label: "Spotify", url: "https://open.spotify.com/artist/nelngabo", description: "Stream in high quality" },
   { label: "Apple Music", url: "https://music.apple.com/", description: "Listen on all Apple devices" },
   { label: "YouTube", url: "https://www.youtube.com/@nelngabo9740", description: "Watch the full visual album" },
   { label: "SoundCloud", url: "https://soundcloud.com/", description: "Discover fan remixes" },
-];
-
-const albums = [
-  {
-    id: 1,
-    title: "LATEST ALBUM",
-    year: "2024",
-    image: "/Album.jpeg",
-    tracks: ["Intro", "Heartbeat", "Midnight Drive", "Echoes", "Finale"],
-    summary: "An explosive fusion of afro-futuristic rhythms with neon synth atmospheres.",
-    links: listeningDestinations,
-  },
-  {
-    id: 2,
-    title: "SECOND ALBUM",
-    year: "2023",
-    image: "/Album.jpeg",
-    tracks: ["Start", "Waves", "Hold On", "Skyline"],
-    summary: "A cinematic journey that celebrates coastal sunsets and pulsating nightlife.",
-    links: listeningDestinations,
-  },
-  {
-    id: 3,
-    title: "DEBUT ALBUM",
-    year: "2022",
-    image: "/Album.jpeg",
-    tracks: ["Opening", "Road", "Nightfall"],
-    summary: "Raw storytelling from the early days—minimal beats, maximum emotion.",
-    links: listeningDestinations,
-  },
 ];
 
 const MusicSection = () => {
@@ -50,13 +21,40 @@ const MusicSection = () => {
     }
   `;
 
-  const [selectedAlbum, setSelectedAlbum] = useState(albums[0]);
+  const { content } = useContent();
+  const albums = content.albums;
+  const [selectedAlbumId, setSelectedAlbumId] = useState(albums[0]?.id);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
-  const handleSelectAlbum = (album: (typeof albums)[number]) => {
-    setSelectedAlbum(album);
-    document.getElementById(`album-card-${album.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  useEffect(() => {
+    if (!albums.length) {
+      setSelectedAlbumId(undefined);
+      return;
+    }
+    if (!selectedAlbumId || !albums.some((album) => album.id === selectedAlbumId)) {
+      setSelectedAlbumId(albums[0]?.id);
+    }
+  }, [albums, selectedAlbumId]);
+
+  const selectedAlbum = albums.find((album) => album.id === selectedAlbumId) ?? albums[0];
+
+  const handleSelectAlbum = (albumId: string) => {
+    setSelectedAlbumId(albumId);
+    document.getElementById(`album-card-${albumId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
+
+  if (!albums.length || !selectedAlbum) {
+    return (
+      <section id="music" className="py-24 bg-background relative overflow-hidden p-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center space-y-6">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter animate-fade-in">ALBUMS</h2>
+          <p className="text-gray-400 text-lg">
+            No albums published yet. Visit the admin dashboard to add albums, artwork, and tracklists for your fans.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -103,18 +101,18 @@ const MusicSection = () => {
                     data-search-item="music"
                     data-search-label={`Album · ${album.title}`}
                     data-search-category="Album"
-                    data-search-description={`${album.year} · ${album.tracks.length} tracks`}
-                    data-search-keywords={[album.title, album.year, ...album.tracks].join("|")}
+                    data-search-description={`${album.year} · ${(album.tracks ?? []).length} tracks`}
+                    data-search-keywords={[album.title, album.year, ...(album.tracks ?? [])].join("|")}
                     data-search-target="music"
                     data-search-target-element={`album-card-${album.id}`}
                     tabIndex={0}
                     role="button"
                     aria-pressed={isSelected}
-                    onClick={() => handleSelectAlbum(album)}
+                    onClick={() => handleSelectAlbum(album.id)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
-                        handleSelectAlbum(album);
+                        handleSelectAlbum(album.id);
                       }
                     }}
                     className={`group relative overflow-hidden border transition-all duration-500 focus:outline-none ${
@@ -171,8 +169,11 @@ const MusicSection = () => {
                 <div>
                   <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Tracklist</p>
                   <ul className="mt-4 space-y-3">
-                    {selectedAlbum.tracks.map((track, index) => (
-                      <li key={track} className="flex items-center justify-between rounded-xl border border-white/5 bg-black/20 px-3 py-2">
+                    {(selectedAlbum.tracks?.length ? selectedAlbum.tracks : ["No tracks yet"]).map((track, index) => (
+                      <li
+                        key={`${track}-${index}`}
+                        className="flex items-center justify-between rounded-xl border border-white/5 bg-black/20 px-3 py-2"
+                      >
                         <span className="flex items-center gap-3 text-sm text-white/90">
                           <span className="text-xs text-gray-500 w-6">{String(index + 1).padStart(2, "0")}</span>
                           {track}
@@ -186,7 +187,7 @@ const MusicSection = () => {
                 <div>
                   <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Where to listen</p>
                   <div className="mt-4 space-y-3">
-                    {(selectedAlbum.links ?? listeningDestinations).map((link) => (
+                    {(selectedAlbum.links?.length ? selectedAlbum.links : fallbackListeningDestinations).map((link) => (
                       <a
                         key={link.label}
                         href={link.url}

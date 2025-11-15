@@ -1,35 +1,22 @@
 import { useState } from "react";
 import { LayoutGrid, List } from "lucide-react";
-
-const videos = [
-  {
-    id: 1,
-    title: "LATEST MUSIC VIDEO",
-    views: "2.5M",
-    videoId: "lBnokNKI38I",
-  },
-  {
-    id: 2,
-    title: "BEHIND THE SCENES",
-    views: "1.8M",
-    videoId: "OpKFRBu3Czk",
-  },
-  {
-    id: 3,
-    title: "LIVE PERFORMANCE",
-    views: "3.2M",
-    videoId: "Yx-xJyPORGo",
-  },
-  {
-    id: 4,
-    title: "STUDIO SESSION",
-    views: "1.1M",
-    videoId: "sfisO-Yy4LY",
-  },
-];
+import { useContent } from "@/context/ContentContext";
 
 const VideosSection = () => {
+  const { content } = useContent();
+  const videos = content.videos;
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+
+  if (!videos.length) {
+    return (
+      <section id="videos" className="py-24 bg-black relative p-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center space-y-4">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter">VIDEOS</h2>
+          <p className="text-white/70 text-lg">No videos yet. Add video embeds from the admin dashboard.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="videos" className="py-24 bg-black relative p-4">
@@ -87,7 +74,7 @@ const VideosSection = () => {
                 <div className="flex-1 border-t border-white/5 bg-black/40 px-6 py-5 text-left">
                   <p className="text-xs uppercase tracking-[0.4em] text-white/50">{video.views} views</p>
                   <h3 className="mt-2 text-2xl font-bold text-white">{video.title}</h3>
-                  <p className="mt-1 text-sm text-white/60">Exclusive performance footage and behind-the-scenes moments.</p>
+                  <p className="mt-1 text-sm text-white/60">{video.description}</p>
                 </div>
               )}
 

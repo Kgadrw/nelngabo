@@ -1,0 +1,104 @@
+export type HeroNavLink = {
+  id: string;
+  label: string;
+  targetType: "scroll" | "route" | "external";
+  targetValue: string;
+};
+
+export type HeroCta = {
+  label: string;
+  targetType: "scroll" | "route" | "external" | "externalBlank";
+  targetValue: string;
+};
+
+export type HeroSecondaryCta = {
+  label: string;
+  url: string;
+};
+
+export type IconPreset =
+  | "spotify"
+  | "appleMusic"
+  | "youtube"
+  | "soundcloud"
+  | "tiktok"
+  | "instagram"
+  | "x"
+  | "facebook"
+  | "mail"
+  | "phone"
+  | "website";
+
+export type StreamingPlatform = {
+  id: string;
+  label: string;
+  url: string;
+  preset: IconPreset;
+};
+
+export type SocialLink = {
+  id: string;
+  label: string;
+  url: string;
+  preset: IconPreset;
+};
+
+export type ContactMethod = {
+  id: string;
+  label: string;
+  value: string;
+  href: string;
+  preset: IconPreset;
+};
+
+export type HeroContent = {
+  artistName: string;
+  backgroundImage: string;
+  navLinks: HeroNavLink[];
+  primaryCta: HeroCta;
+  secondaryCta: HeroSecondaryCta;
+  streamingPlatforms: StreamingPlatform[];
+  socialLinks: SocialLink[];
+};
+
+export type AlbumLink = {
+  id: string;
+  label: string;
+  url: string;
+  description: string;
+};
+
+export type Album = {
+  id: string;
+  title: string;
+  year: string;
+  image: string;
+  summary: string;
+  tracks: string[];
+  links: AlbumLink[];
+};
+
+export type Video = {
+  id: string;
+  title: string;
+  views: string;
+  videoId: string;
+  description: string;
+};
+
+export type Tour = {
+  id: string;
+  date: string;
+  city: string;
+  venue: string;
+  ticketUrl: string;
+};
+
+export type ContentState = {
+  hero: HeroContent;
+  albums: Album[];
+  videos: Video[];
+  tours: Tour[];
+};
+
+

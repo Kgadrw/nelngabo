@@ -1,40 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin } from "lucide-react";
+import { useContent } from "@/context/ContentContext";
 
-const tours = [
-  {
-    id: 1,
-    date: "MAR 15, 2024",
-    city: "NEW YORK",
-    venue: "Madison Square Garden",
-  },
-  {
-    id: 2,
-    date: "MAR 22, 2024",
-    city: "LOS ANGELES",
-    venue: "The Forum",
-  },
-  {
-    id: 3,
-    date: "MAR 29, 2024",
-    city: "CHICAGO",
-    venue: "United Center",
-  },
-  {
-    id: 4,
-    date: "APR 05, 2024",
-    city: "MIAMI",
-    venue: "FTX Arena",
-  },
-  {
-    id: 5,
-    date: "APR 12, 2024",
-    city: "ATLANTA",
-    venue: "State Farm Arena",
-  },
-];
+const formatTourDate = (value: string) => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }).toUpperCase();
+};
 
 const ToursSection = () => {
+  const { content } = useContent();
+  const tours = content.tours;
+
+  if (!tours.length) {
+    return (
+      <section id="tours" className="py-24 bg-background relative overflow-hidden p-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center space-y-4">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter">TOURS</h2>
+          <p className="text-gray-400 text-lg">No tour dates announced. Add locations and ticket links in the admin dashboard.</p>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="tours" className="py-24 bg-background relative overflow-hidden p-4">
       {/* Diagonal lines background */}
@@ -76,7 +63,9 @@ const ToursSection = () => {
               <div className="flex-1 space-y-2 mb-4 md:mb-0 relative z-10">
                 <div className="flex items-center gap-3 text-gray-medium">
                   <Calendar className="w-4 h-4" />
-                  <span className="text-sm font-medium font-mono group-hover:tracking-wider transition-all duration-300">{tour.date}</span>
+                  <span className="text-sm font-medium font-mono group-hover:tracking-wider transition-all duration-300">
+                    {formatTourDate(tour.date)}
+                  </span>
                 </div>
                 <h3 className="text-2xl font-bold group-hover:translate-x-2 transition-transform duration-300">{tour.city}</h3>
                 <div className="flex items-center gap-3 text-gray-medium">
@@ -85,8 +74,10 @@ const ToursSection = () => {
                 </div>
               </div>
               
-              <Button className="w-full md:w-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
-                GET TICKETS
+              <Button asChild className="w-full md:w-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
+                <a href={tour.ticketUrl} target="_blank" rel="noopener noreferrer">
+                  GET TICKETS
+                </a>
               </Button>
               
               {/* Index number */}

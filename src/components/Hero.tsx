@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Play, Music3, Music4, Disc3, Youtube, Radio, Search, Phone, Mail, Instagram, Twitter, Music2, Facebook } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
+import { Play, Music3, Music4, Disc3, Youtube, Radio, Search, Phone, Mail, Instagram, Twitter, Music2, Facebook, Globe } from "lucide-react";
+import { useContent } from "@/context/ContentContext";
+import type { HeroCta, HeroNavLink, IconPreset } from "@/types/content";
 
 type PlatformSearchItem = {
   id: string;
@@ -41,11 +44,68 @@ const BASE_SEARCH_ITEMS: PlatformSearchItem[] = [
   },
 ];
 
+const iconMap: Record<IconPreset, LucideIcon> = {
+  spotify: Music4,
+  appleMusic: Disc3,
+  youtube: Youtube,
+  soundcloud: Radio,
+  tiktok: Music2,
+  instagram: Instagram,
+  x: Twitter,
+  facebook: Facebook,
+  mail: Mail,
+  phone: Phone,
+  website: Globe,
+};
+
+const resolveIcon = (preset: IconPreset) => iconMap[preset] ?? Globe;
+
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [dynamicSearchItems, setDynamicSearchItems] = useState<PlatformSearchItem[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { content } = useContent();
+  const navigate = useNavigate();
+
+  const heroContent = content.hero;
+  const heroNavLinks = heroContent.navLinks ?? [];
+  const streamingPlatforms = heroContent.streamingPlatforms ?? [];
+  const socialLinks = heroContent.socialLinks ?? [];
+  const heroImage = heroContent.backgroundImage || "/hero.jpeg";
+  const heroName = heroContent.artistName || "NEL NGABO";
+  const primaryCta: HeroCta = heroContent.primaryCta ?? {
+    label: "Explore Music",
+    targetType: "scroll",
+    targetValue: "music",
+  };
+  const secondaryCta = heroContent.secondaryCta ?? {
+    label: "Watch Now",
+    url: "https://www.youtube.com/",
+  };
+
+  const hiddenStreamingPresets: IconPreset[] = ["tiktok", "instagram", "x", "facebook", "mail", "phone"];
+  const visibleStreamingPlatforms = streamingPlatforms.filter((platform) => !hiddenStreamingPresets.includes(platform.preset));
+
+  const handleTargetAction = (targetType: HeroNavLink["targetType"] | HeroCta["targetType"], targetValue: string) => {
+    if (!targetValue) return;
+    if (targetType === "scroll") {
+      document.getElementById(targetValue)?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (targetType === "route") {
+      navigate(targetValue);
+      return;
+    }
+    if (targetType === "external") {
+      window.location.href = targetValue;
+      return;
+    }
+    window.open(targetValue, "_blank", "noopener,noreferrer");
+  };
+
+  const handleHeroNav = (nav: HeroNavLink) => handleTargetAction(nav.targetType, nav.targetValue);
+  const handleHeroCta = (cta: HeroCta) => handleTargetAction(cta.targetType, cta.targetValue);
 
   useEffect(() => {
     const collectDynamicItems = () => {
@@ -224,7 +284,7 @@ const Hero = () => {
       </div>
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(/hero.jpeg)` }}
+        style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
       </div>
@@ -235,7 +295,7 @@ const Hero = () => {
               className="text-5xl md:text-7xl lg:text-8xl font-normal tracking-tighter relative z-10"
               style={{ fontFamily: '"Kablammo", "Oi", cursive' }}
             >
-              NEL NGABO
+              {heroName}
             </h1>
             {/* Glitch effect text shadow */}
             <h1
@@ -246,57 +306,23 @@ const Hero = () => {
               }}
               aria-hidden="true"
             >
-              NEL NGABO
+              {heroName}
             </h1>
           </div>
-          <div className="text-xl md:text-2xl text-gray-medium font-mono flex flex-wrap gap-2">
-            <a
-              href="/music"
-              className="hover:text-foreground transition-colors duration-300 cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('music')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              MUSIC
-            </a>
-              <span className="cursor-pointer">•</span>
-            <Link
-              to="/videos"
-              className="hover:text-foreground transition-colors duration-300 cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('videos')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              VIDEOS
-            </Link>
-              <span className="cursor-pointer">•</span>
-            <Link
-              to="/tours"
-              className="hover:text-foreground transition-colors duration-300 cursor-pointer"
-            >
-              TOURS
-            </Link>
-          </div>
           <div className="flex flex-col sm:flex-row gap-4 pt-4 items-center">
-            <Button asChild size="lg" className="text-lg px-8 group relative overflow-hidden">
-              <a
-                href="#videos"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('videos')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="relative z-10 flex items-center justify-center"
+            <Button
+              type="button"
+              size="lg"
+              className="text-lg px-8 group relative overflow-hidden"
+              onClick={() => handleHeroCta(primaryCta)}
               >
-                <span className="relative z-10">LATEST ALBUM</span>
+              <span className="relative z-10">{primaryCta.label}</span>
                 <div className="absolute inset-0 bg-foreground/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-              </a>
             </Button>
 
             <Button asChild size="lg" variant="outline" className="text-lg px-8 group relative overflow-hidden">
               <a
-                href="https://www.youtube.com/@nelngabo9740"
+                href={secondaryCta.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative flex items-center justify-center"
@@ -304,7 +330,7 @@ const Hero = () => {
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 opacity-0 group-hover:opacity-20 group-hover:scale-110 transition-all duration-300 transform origin-center" />
                 <Play className="w-5 h-5 mr-2 fill-pink-500 text-pink-500 play-icon-glow" />
                 <span className="relative z-10 group-hover:tracking-wider transition-all duration-300">
-                  WATCH NOW
+                  {secondaryCta.label}
                 </span>
               </a>
             </Button>
@@ -315,88 +341,42 @@ const Hero = () => {
             <Music3 className="h-4 w-4" />
             Streaming
           </p>
-          <div className="flex flex-col gap-3 text-sm tracking-[0.25em] text-white/70">
-            <a
-              href="https://open.spotify.com/artist/nelngabo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 hover:text-white transition"
-            >
-              <Music4 className="h-4 w-4" />
-              <span>Spotify</span>
-            </a>
-            <a
-              href="https://music.apple.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 hover:text-white transition"
-            >
-              <Disc3 className="h-4 w-4" />
-              <span>Apple Music</span>
-            </a>
-            <a
-              href="https://www.youtube.com/@nelngabo9740"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 hover:text-white transition"
-            >
-              <Youtube className="h-4 w-4" />
-              <span>YouTube</span>
-            </a>
-            <a
-              href="https://soundcloud.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 hover:text-white transition"
-            >
-              <Radio className="h-4 w-4" />
-              <span>SoundCloud</span>
-            </a>
-          </div>
+          {visibleStreamingPlatforms.length > 0 && (
+            <div className="flex flex-col gap-3 text-sm tracking-[0.25em] text-white/70">
+              {visibleStreamingPlatforms.map((platform) => {
+                const Icon = resolveIcon(platform.preset);
+                return (
+                  <a
+                    key={platform.id}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 hover:text-white transition"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{platform.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+          )}
           <div className={`grid grid-cols-3 gap-3 transition-opacity ${isSearchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}>
-            {[
-              {
-                href: "https://www.tiktok.com/@nelngabo",
-                label: "TikTok",
-                Icon: Music2,
-              },
-              {
-                href: "https://www.instagram.com/nelngabo",
-                label: "Instagram",
-                Icon: Instagram,
-              },
-              {
-                href: "https://twitter.com/nelngabo",
-                label: "X",
-                Icon: Twitter,
-              },
-              {
-                href: "https://www.facebook.com/nelngabo",
-                label: "Facebook",
-                Icon: Facebook,
-              },
-              {
-                href: "mailto:contact@nelngabo.com",
-                label: "Email",
-                Icon: Mail,
-              },
-              {
-                href: "tel:+250788123456",
-                label: "Phone",
-                Icon: Phone,
-              },
-            ].map(({ href, label, Icon }) => (
+            {socialLinks.map((link) => {
+              const Icon = resolveIcon(link.preset);
+              const isExternal = link.url.startsWith("http");
+              return (
               <a
-                key={label}
-                href={href}
-                target={href.startsWith("http") ? "_blank" : undefined}
-                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  key={link.id}
+                  href={link.url}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
                 className="flex h-10 w-10 items-center justify-center border border-white/30 bg-transparent text-white shadow-lg transition hover:border-white hover:text-foreground"
-                aria-label={label}
+                  aria-label={link.label}
               >
                 <Icon className="h-4 w-4" />
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
