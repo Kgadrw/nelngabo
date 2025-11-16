@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
@@ -200,97 +201,151 @@ const Hero = () => {
     <>
       <style>{glowStyle}</style>
     <section className="relative h-screen w-full overflow-hidden border-0 p-4 bg-black">
-      <div className="absolute right-6 top-6 z-20 flex items-center gap-3">
-        <button
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="absolute right-6 top-6 z-20 flex items-center gap-3"
+      >
+        <motion.button
           type="button"
           onClick={() => setIsSearchOpen((prev) => !prev)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className={`flex h-10 w-10 items-center justify-center border border-white/40 bg-black/80 text-white shadow-lg transition hover:border-white hover:bg-black ${
             isSearchOpen ? "border-white bg-black" : ""
           }`}
           aria-label="Toggle search"
         >
           <Search className="h-4 w-4" strokeWidth={2.5} />
-        </button>
-        {isSearchOpen && (
-          <div className="relative">
-            <form
-              onSubmit={handleSearch}
-              className="flex items-center border border-white/20 bg-black/80 px-4 py-2 text-white backdrop-blur-xl shadow-lg"
+        </motion.button>
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "auto" }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
             >
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search anything..."
-                className="w-36 sm:w-52 bg-transparent text-xs uppercase tracking-[0.3em] text-white placeholder:text-white/30 focus:outline-none"
-                onBlur={(event) => {
-                  // delay closing to allow suggestion click
-                  setTimeout(() => {
-                    const nextTarget = event.relatedTarget as HTMLElement | null;
-                    if (!nextTarget?.classList.contains("search-suggestion")) {
-                      setIsSearchOpen(false);
-                    }
-                  }, 120);
-                }}
-              />
-            </form>
-            {filteredSuggestions.length > 0 ? (
-              <ul className="absolute top-full mt-2 w-full divide-y divide-white/10 border border-white/10 bg-black/95 text-white shadow-2xl">
-                {filteredSuggestions.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      type="button"
-                      className="search-suggestion block w-full px-4 py-3 text-left transition hover:bg-white/10"
-                      onClick={() => {
-                        handleNavigate(item);
-                        setSearchQuery("");
+              <form
+                onSubmit={handleSearch}
+                className="flex items-center border border-white/20 bg-black/80 px-4 py-2 text-white backdrop-blur-xl shadow-lg"
+              >
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search anything..."
+                  className="w-36 sm:w-52 bg-transparent text-xs uppercase tracking-[0.3em] text-white placeholder:text-white/30 focus:outline-none"
+                  onBlur={(event) => {
+                    // delay closing to allow suggestion click
+                    setTimeout(() => {
+                      const nextTarget = event.relatedTarget as HTMLElement | null;
+                      if (!nextTarget?.classList.contains("search-suggestion")) {
                         setIsSearchOpen(false);
-                      }}
-                    >
-                      <p className="text-[0.55rem] uppercase tracking-[0.35em] text-white/50">{item.category}</p>
-                      <p className="text-sm font-semibold tracking-wide text-white">{item.label}</p>
-                      {item.description && (
-                        <p className="text-[0.65rem] text-white/60">{item.description}</p>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              searchQuery.trim() && (
-                <div className="absolute top-full mt-2 w-full border border-white/10 bg-black/95 px-4 py-3 text-xs uppercase tracking-[0.25em] text-white/60 shadow-2xl">
-                  <p>No matching content on the platform.</p>
-                  <button
-                    type="button"
-                    className="mt-2 underline"
-                    onClick={() => {
-                      window.open(
-                        `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                      setIsSearchOpen(false);
-                      setSearchQuery("");
-                    }}
+                      }
+                    }, 120);
+                  }}
+                />
+              </form>
+              <AnimatePresence>
+                {filteredSuggestions.length > 0 ? (
+                  <motion.ul
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full mt-2 w-full divide-y divide-white/10 border border-white/10 bg-black/95 text-white shadow-2xl"
                   >
-                    Search on Google
-                  </button>
-                </div>
-              )
-            )}
-          </div>
-        )}
-      </div>
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                    {filteredSuggestions.map((item, index) => (
+                      <motion.li
+                        key={item.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <button
+                          type="button"
+                          className="search-suggestion block w-full px-4 py-3 text-left transition hover:bg-white/10"
+                          onClick={() => {
+                            handleNavigate(item);
+                            setSearchQuery("");
+                            setIsSearchOpen(false);
+                          }}
+                        >
+                          <p className="text-[0.55rem] uppercase tracking-[0.35em] text-white/50">{item.category}</p>
+                          <p className="text-sm font-semibold tracking-wide text-white">{item.label}</p>
+                          {item.description && (
+                            <p className="text-[0.65rem] text-white/60">{item.description}</p>
+                          )}
+                        </button>
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                ) : (
+                  searchQuery.trim() && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full mt-2 w-full border border-white/10 bg-black/95 px-4 py-3 text-xs uppercase tracking-[0.25em] text-white/60 shadow-2xl"
+                    >
+                      <p>No matching content on the platform.</p>
+                      <button
+                        type="button"
+                        className="mt-2 underline"
+                        onClick={() => {
+                          window.open(
+                            `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                      >
+                        Search on Google
+                      </button>
+                    </motion.div>
+                  )
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Fallback background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        />
+        {/* YouTube background video */}
+        <iframe
+          className="absolute top-1/2 left-1/2 w-[177.77777778vh] h-[56.25vw] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover z-0"
+          src="https://www.youtube.com/embed/lBnokNKI38I?autoplay=1&mute=1&loop=1&playlist=lBnokNKI38I&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          style={{ pointerEvents: "none" }}
+          title="Background Video"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
       </div>
       <div className="relative h-full flex items-end justify-between pb-20 px-4 sm:px-8 lg:px-12 gap-8">
-        <div className="space-y-6 max-w-2xl animate-fade-in text-center sm:text-left mx-auto sm:mx-0">
-          <div className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="space-y-6 max-w-2xl text-center sm:text-left mx-auto sm:mx-0"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="relative"
+          >
             <h1
               className="text-5xl md:text-7xl lg:text-8xl font-normal tracking-tighter relative z-10"
               style={{ fontFamily: '"Kablammo", "Oi", cursive' }}
@@ -308,77 +363,115 @@ const Hero = () => {
             >
               {heroName}
             </h1>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 items-center">
-            <Button
-              type="button"
-              size="lg"
-              className="text-lg px-8 group relative overflow-hidden"
-              onClick={() => handleHeroCta(primaryCta)}
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-4 pt-4 items-center"
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                type="button"
+                size="lg"
+                className="text-lg px-8 group relative overflow-hidden"
+                onClick={() => handleHeroCta(primaryCta)}
               >
-              <span className="relative z-10">{primaryCta.label}</span>
+                <span className="relative z-10">{primaryCta.label}</span>
                 <div className="absolute inset-0 bg-foreground/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-            </Button>
+              </Button>
+            </motion.div>
 
-            <Button asChild size="lg" variant="outline" className="text-lg px-8 group relative overflow-hidden">
-              <a
-                href={secondaryCta.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative flex items-center justify-center"
-              >
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 opacity-0 group-hover:opacity-20 group-hover:scale-110 transition-all duration-300 transform origin-center" />
-                <Play className="w-5 h-5 mr-2 fill-pink-500 text-pink-500 play-icon-glow" />
-                <span className="relative z-10 group-hover:tracking-wider transition-all duration-300">
-                  {secondaryCta.label}
-                </span>
-              </a>
-            </Button>
-          </div>
-        </div>
-        <div className="hidden lg:flex flex-col items-end gap-4">
-          <p className="flex items-center gap-2 text-xs uppercase tracking-[0.5em] text-white/50">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button asChild size="lg" variant="outline" className="text-lg px-8 group relative overflow-hidden">
+                <a
+                  href={secondaryCta.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative flex items-center justify-center"
+                >
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 opacity-0 group-hover:opacity-20 group-hover:scale-110 transition-all duration-300 transform origin-center" />
+                  <Play className="w-5 h-5 mr-2 fill-pink-500 text-pink-500 play-icon-glow" />
+                  <span className="relative z-10 group-hover:tracking-wider transition-all duration-300">
+                    {secondaryCta.label}
+                  </span>
+                </a>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="hidden lg:flex flex-col items-end gap-4"
+        >
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex items-center gap-2 text-xs uppercase tracking-[0.5em] text-white/50"
+          >
             <Music3 className="h-4 w-4" />
             Streaming
-          </p>
+          </motion.p>
           {visibleStreamingPlatforms.length > 0 && (
-            <div className="flex flex-col gap-3 text-sm tracking-[0.25em] text-white/70">
-              {visibleStreamingPlatforms.map((platform) => {
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="flex flex-col gap-3 text-sm tracking-[0.25em] text-white/70"
+            >
+              {visibleStreamingPlatforms.map((platform, index) => {
                 const Icon = resolveIcon(platform.preset);
                 return (
-                  <a
+                  <motion.a
                     key={platform.id}
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.9 + index * 0.1 }}
+                    whileHover={{ x: -5 }}
                     className="flex items-center gap-3 hover:text-white transition"
                   >
                     <Icon className="h-4 w-4" />
                     <span>{platform.label}</span>
-                  </a>
+                  </motion.a>
                 );
               })}
-            </div>
+            </motion.div>
           )}
-          <div className={`grid grid-cols-3 gap-3 transition-opacity ${isSearchOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}>
-            {socialLinks.map((link) => {
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isSearchOpen ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+            className={`grid grid-cols-3 gap-3 ${isSearchOpen ? "pointer-events-none" : ""}`}
+          >
+            {socialLinks.map((link, index) => {
               const Icon = resolveIcon(link.preset);
               const isExternal = link.url.startsWith("http");
               return (
-              <a
+                <motion.a
                   key={link.id}
                   href={link.url}
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noopener noreferrer" : undefined}
-                className="flex h-10 w-10 items-center justify-center border border-white/30 bg-transparent text-white shadow-lg transition hover:border-white hover:text-foreground"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.1 + index * 0.1 }}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="flex h-10 w-10 items-center justify-center border border-white/30 bg-transparent text-white shadow-lg transition hover:border-white hover:text-foreground"
                   aria-label={link.label}
-              >
-                <Icon className="h-4 w-4" />
-              </a>
+                >
+                  <Icon className="h-4 w-4" />
+                </motion.a>
               );
             })}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
     </>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { Home, Music4, Clapperboard, MapPin, Menu, X, Instagram, Twitter, Youtube, Sparkles, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,37 +45,58 @@ const Sidebar = ({ variant = "frontend" }: SidebarProps) => {
   return (
     <>
       <style>{waveAnimation}</style>
-      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-white/10 bg-black/80 px-8 py-10 text-white backdrop-blur-xl md:flex">
-        <div className="space-y-2">
+      <motion.aside
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-white/10 bg-black/80 px-8 py-10 text-white backdrop-blur-xl md:flex"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-2"
+        >
           <p className="text-xs uppercase tracking-[0.5em] text-white/50">Artist</p>
           <div className="text-3xl font-bold tracking-[0.45em]">NEL NGABO</div>
-        </div>
+        </motion.div>
         <nav className="mt-12 flex flex-1 flex-col gap-3">
-          {navLinks.map(({ to, label, icon: Icon }) => (
-            <NavLink
+          {navLinks.map(({ to, label, icon: Icon }, index) => (
+            <motion.div
               key={label}
-              to={to}
-              end={variant === "admin" && to === "/admin"}
-              className={({ isActive }) =>
-                [
-                  "flex items-center gap-3 px-4 py-3 text-sm uppercase tracking-[0.3em] transition",
-                  isActive ? "bg-white text-black" : "text-white/60 hover:bg-white/10 rounded-2xl",
-                ].join(" ")
-              }
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
             >
-              <Icon className="h-4 w-4" />
-              <span>{label}</span>
-            </NavLink>
+              <NavLink
+                to={to}
+                end={variant === "admin" && to === "/admin"}
+                className={({ isActive }) =>
+                  [
+                    "flex items-center gap-3 px-4 py-3 text-sm uppercase tracking-[0.3em] transition",
+                    isActive ? "bg-white text-black" : "text-white/60 hover:bg-white/10 rounded-2xl",
+                  ].join(" ")
+                }
+              >
+                <Icon className="h-4 w-4" />
+                <span>{label}</span>
+              </NavLink>
+            </motion.div>
           ))}
         </nav>
         {variant === "frontend" && (
-          <div className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="space-y-4"
+          >
             <p className="text-xs uppercase tracking-[0.4em] text-white/40">Latest release</p>
             <div className="flex items-center gap-3 px-2 py-1">
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex items-end gap-[2px]">
                   {waveHeights.map((height, index) => (
-                    <span
+                    <motion.span
                       key={index}
                       className="w-[3px] rounded-full bg-gradient-to-t from-pink-500 via-purple-500 to-sky-500"
                       style={{
@@ -82,18 +104,30 @@ const Sidebar = ({ variant = "frontend" }: SidebarProps) => {
                         animation: "wavePulse 1.4s ease-in-out infinite",
                         animationDelay: `${index * 60}ms`,
                       }}
+                      initial={{ scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ delay: 0.8 + index * 0.05, duration: 0.3 }}
                     />
                   ))}
                 </div>
               </div>
-              <div className="text-[0.6rem] font-semibold tracking-[0.4em] text-white">VIBRANIUM</div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="text-[0.6rem] font-semibold tracking-[0.4em] text-white"
+              >
+                VIBRANIUM
+              </motion.div>
             </div>
-            <Button variant="secondary" asChild className="w-full uppercase tracking-[0.3em]">
-              <a href="/music">Listen</a>
-            </Button>
-          </div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button variant="secondary" asChild className="w-full uppercase tracking-[0.3em]">
+                <a href="/music">Listen</a>
+              </Button>
+            </motion.div>
+          </motion.div>
         )}
-      </aside>
+      </motion.aside>
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-white/10 bg-black/80 px-6 py-4 text-xs uppercase tracking-[0.4em] text-white/70 md:hidden">
         <span>NEL NGABO</span>
         <button
@@ -106,54 +140,91 @@ const Sidebar = ({ variant = "frontend" }: SidebarProps) => {
           Menu
         </button>
       </div>
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/95 text-white flex flex-col p-6 space-y-8 md:hidden">
-          <div className="flex items-center justify-between text-xs uppercase tracking-[0.4em]">
-            <span>NEL NGABO</span>
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-2 text-white"
-              aria-label="Close menu"
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-black/95 text-white flex flex-col p-6 space-y-8 md:hidden"
+          >
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center justify-between text-xs uppercase tracking-[0.4em]"
             >
-              Close
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-6 text-3xl font-bold tracking-[0.2em]">
-            {navLinks.map(({ to, label }) => (
-              <NavLink
-                key={label}
-                to={to}
-                end={variant === "admin" && to === "/admin"}
+              <span>NEL NGABO</span>
+              <motion.button
+                type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  [
-                    "uppercase transition",
-                    isActive ? "text-white" : "text-white/60 hover:text-white",
-                  ].join(" ")
-                }
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="flex items-center gap-2 text-white"
+                aria-label="Close menu"
               >
-                {label}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="mt-auto space-y-4">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/50">Follow</p>
-            <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/nelngabo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <Instagram className="h-6 w-6" />
-              </a>
-              <a href="https://twitter.com/nelngabo" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                <Twitter className="h-6 w-6" />
-              </a>
-              <a href="https://www.youtube.com/@nelngabo9740" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                <Youtube className="h-6 w-6" />
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+                Close
+                <X className="h-4 w-4" />
+              </motion.button>
+            </motion.div>
+            <nav className="flex flex-col gap-6 text-3xl font-bold tracking-[0.2em]">
+              {navLinks.map(({ to, label }, index) => (
+                <motion.div
+                  key={label}
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                >
+                  <NavLink
+                    to={to}
+                    end={variant === "admin" && to === "/admin"}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      [
+                        "uppercase transition",
+                        isActive ? "text-white" : "text-white/60 hover:text-white",
+                      ].join(" ")
+                    }
+                  >
+                    {label}
+                  </NavLink>
+                </motion.div>
+              ))}
+            </nav>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="mt-auto space-y-4"
+            >
+              <p className="text-xs uppercase tracking-[0.4em] text-white/50">Follow</p>
+              <div className="flex items-center gap-4">
+                {[
+                  { href: "https://www.instagram.com/nelngabo/", icon: Instagram, label: "Instagram" },
+                  { href: "https://twitter.com/nelngabo", icon: Twitter, label: "Twitter" },
+                  { href: "https://www.youtube.com/@nelngabo9740", icon: Youtube, label: "YouTube" },
+                ].map(({ href, icon: Icon, label }, index) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.7 + index * 0.1, type: "spring" }}
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
